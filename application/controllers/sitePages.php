@@ -21,17 +21,17 @@ if (! defined('BASEPATH'))
  * limitations under the License.
  */
 class sitePages extends MY_Controller {
-
-    /**
-     * construct controller with libraries/helpers included from base controller
-     */
-    public function __construct() {
-        parent::__construct();
-    }
-
-    /**
+	
+	/**
+	 * construct controller with libraries/helpers included from base controller
+	 */
+	public function __construct() {
+		parent::__construct ();
+	}
+	
+	/**
      * FAQs
-     */
+	 */
     public function faqs() {
 
         /** SEO meta tags (optional) */
@@ -39,5 +39,5 @@ class sitePages extends MY_Controller {
         $this->values['websiteKeyWords'] = "faq keywords";
         $this->values['websiteTitle'] = "faq keywords page title";
         $this->renderCompletePage('sitePages/faqs', $this->values);
-    }
+	}
 }

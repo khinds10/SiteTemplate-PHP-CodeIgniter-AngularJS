@@ -31,8 +31,8 @@ class CI_Cache_memcached extends CI_Driver {
 
 	protected $_memcache_conf 	= array(
 					'default' => array(
-						'default_host'		=> '127.0.0.1',
-						'default_port'		=> 11211,
+						'default_host' => MEMCACHED_HOST,
+						'default_port' => MEMCACHED_PORT,
 						'default_weight'	=> 1
 					)
 				);
@@ -52,6 +52,14 @@ class CI_Cache_memcached extends CI_Driver {
 		return (is_array($data)) ? $data[0] : FALSE;
 	}
 
+	/**
+	 * getter for the private memcached instance for heartbeat requests
+	 * @return object
+	 */
+	public function getMemcachedInstance() {
+		return 	$this->_memcached;
+	}
+	
 	// ------------------------------------------------------------------------
 
 	/**

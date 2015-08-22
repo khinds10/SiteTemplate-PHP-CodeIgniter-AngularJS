@@ -4,7 +4,7 @@ if (! defined('BASEPATH'))
 
 /**
  * Memcached Driver "Simple"
- *		simplified memcache driver for values to later be read in JAVA
+ * simplified memcache driver for values to later be read in JAVA
  *
  * @copyright Kevin Hinds @ KevinHinds.com
  *
@@ -21,14 +21,14 @@ if (! defined('BASEPATH'))
  * limitations under the License.
  */
 class CI_Cache_memcached_simple extends CI_Driver {
-
+	
 	/**
 	 * local memcached object
 	 *
 	 * @var object memcached
 	 */
 	private $_memcached;
-
+	
 	/**
 	 * memcache config
 	 *
@@ -36,10 +36,10 @@ class CI_Cache_memcached_simple extends CI_Driver {
 	 */
 	protected $_memcache_conf = array (
 			'default' => array (
-					'default_host' => '127.0.0.1',
-					'default_port' => 11211,
-					'default_weight' => 1
-			)
+					'default_host' => MEMCACHED_HOST,
+					'default_port' => MEMCACHED_PORT,
+					'default_weight' => 1 
+			) 
 	);
 
 	/**
@@ -60,7 +60,7 @@ class CI_Cache_memcached_simple extends CI_Driver {
 	public function getMemcachedInstance() {
 		return 	$this->_memcached;
 	}
-
+	
 	/**
 	 * save a simple data element to memcache without code igniter special array
 	 *
@@ -121,17 +121,17 @@ class CI_Cache_memcached_simple extends CI_Driver {
 	 */
 	public function get_metadata($id) {
 		$stored = $this->_memcached->get($id);
-
+		
 		if (count($stored) !== 3) {
 			return FALSE;
 		}
-
+		
 		list ( $data, $time, $ttl ) = $stored;
-
+		
 		return array (
 				'expire' => $time + $ttl,
 				'mtime' => $time,
-				'data' => $data
+				'data' => $data 
 		);
 	}
 
@@ -149,22 +149,23 @@ class CI_Cache_memcached_simple extends CI_Driver {
 				}
 			}
 		}
-
+		
 		$this->_memcached = new Memcached();
-
+		
 		foreach ( $this->_memcache_conf as $name => $cache_server ) {
+			
 			if (! array_key_exists('hostname', $cache_server)) {
 				$cache_server ['hostname'] = $this->_default_options ['default_host'];
 			}
-
+			
 			if (! array_key_exists('port', $cache_server)) {
 				$cache_server ['port'] = $this->_default_options ['default_port'];
 			}
-
+			
 			if (! array_key_exists('weight', $cache_server)) {
 				$cache_server ['weight'] = $this->_default_options ['default_weight'];
 			}
-
+			
 			$this->_memcached->addServer($cache_server ['hostname'], $cache_server ['port'], $cache_server ['weight']);
 		}
 	}
@@ -178,10 +179,9 @@ class CI_Cache_memcached_simple extends CI_Driver {
 	public function is_supported() {
 		if (! extension_loaded('memcached')) {
 			log_message('error', 'The Memcached Extension must be loaded to use Memcached Cache.');
-
 			return FALSE;
 		}
-
+		
 		$this->_setup_memcached();
 		return TRUE;
 	}

@@ -5,7 +5,7 @@
  *---------------------------------------------------------------
  *
  * Place your website HTML globals here to apply to any and all views
- *
+ * 
  */
 define('WEBSITE_NAME', 'Website.com');
 define('WEBSITE_KEYWORDS', 'website, keywords, seo, and so on');
@@ -16,8 +16,6 @@ define('WEBSITE_META_VIEWPORT', 'initial-scale = 1.0');
 
 /** Default contact phone number and email address */
 define('DEFAULT_EMAIL_FROM', 'website <service@website.com>');
-
-/** Custom analytic tracking for contact us visitors*/
 define('CONTACT_TOLLFREE', '800-555-4444');
 define('CONTACT_WW', '+1 789-555-1234');
 

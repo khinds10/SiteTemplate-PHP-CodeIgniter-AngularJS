@@ -19,216 +19,277 @@ if (! defined('BASEPATH'))
  * limitations under the License.
  */
 class heartbeat extends CI_Controller {
-
+	
 	/**
 	 * heartbeat information to be returned as JSON array
 	 *
 	 * @var array
 	 */
 	public $heartBeatResponse = array ();
-
+	
 	/**
 	 * the HTTP status code to return with the response
 	 *
 	 * @var int
 	 */
 	protected $HTTPStatusCode = 200;
-
+	
+	/**
+	 * basic session set value
+	 */
+	public function setSessionValue() {
+		echo "<h2>Test SET Session Value</h2>";
+		$this->appsession->set ( 'test session value', 'my value 123' );
+		echo '"test session value" <strong>set to:</strong> "my value 123"';
+		$this->dumpSession ();
+	}
+	
+	/**
+	 * basic session get value
+	 */
+	public function getSessionValue() {
+		echo "<h2>Test GET Session Value</h2>";
+		echo '"test session value" <strong>returned as:</strong> ';
+		print_r ( $this->appsession->get ( 'test session value' ) );
+		$this->dumpSession ();
+	}
+	
+	/**
+	 * dump all available session information
+	 */
+	public function dumpSession() {
+		echo "<h2>ALL Session Values</h2>";
+		echo '<strong>Cookies Set:</strong><br/>';
+		print_r ( $_COOKIE );
+		print "<br/>";
+		print_r ( session_get_cookie_params () );
+		echo '<br/><br/><strong>Code Igniter Session:</strong><br/>';
+		print_r ( $_SESSION );
+	}
+	
 	/**
 	 * generate new heartbeat JSON respons
 	 */
 	public function generate() {
-
+		
 		/**
 		 * setup the custom error codes handler in case it doesn't exist for
 		 * this version of PHP
 		 */
-		$this->setupCustomHeadersOptions();
-
+		$this->setupCustomHeadersOptions ();
+		
 		/**
 		 * full check memcache
 		 */
-		$this->checkMemcache();
-
+		$this->checkMemcache ();
+		
+		/**
+		 * full check PHP sessions
+		 */
+		$this->checkSession ();
+		
 		/**
 		 * show site configured URLs and check services
 		 */
-		$this->showSiteInfo();
-
+		$this->showSiteInfo ();
+		
 		/**
 		 * return the JSON response with the HTTP status code
 		 */
-		http_response_code($this->HTTPStatusCode);
-		echo json_encode(array (
-				'HEARTBEAT RESPONSE [' . date(DATE_RFC2822) . ']',
-				$this->heartBeatResponse
-		), JSON_PRETTY_PRINT);
+		http_response_code ( $this->HTTPStatusCode );
+		echo json_encode ( array (
+				'HEARTBEAT RESPONSE [' . date ( DATE_RFC2822 ) . ']',
+				$this->heartBeatResponse 
+		), JSON_PRETTY_PRINT );
 	}
-
+	
 	/**
 	 * show the site basic URL configuration
 	 */
 	protected function showSiteInfo() {
 		$this->addMessage('INFO', 'GOOGLE_ANALYTICS_ACCOUNT', GOOGLE_ANALYTICS_ACCOUNT);
-		$this->addMessage('INFO', 'TOLLFREE_DEFAULT', TOLLFREE_DEFAULT);
-		$this->addMessage('INFO', 'WW_DEFAULT', WW_DEFAULT);
-		$this->addMessage('INFO', 'WEBSITE_NAME', WEBSITE_NAME);
-		$this->addMessage('INFO', 'WEBSITE_DESCRIPTION', WEBSITE_DESCRIPTION);
-		$this->addMessage('INFO', 'WEBSITE_TITLE', WEBSITE_TITLE);
-		$this->addMessage('INFO', 'WEBSITE_META_VIEWPORT', WEBSITE_META_VIEWPORT);
+		$this->addMessage ( 'INFO', 'TOLLFREE_DEFAULT', TOLLFREE_DEFAULT );
+		$this->addMessage ( 'INFO', 'WW_DEFAULT', WW_DEFAULT );
+		$this->addMessage ( 'INFO', 'WEBSITE_NAME', WEBSITE_NAME );
+		$this->addMessage ( 'INFO', 'WEBSITE_DESCRIPTION', WEBSITE_DESCRIPTION );
+		$this->addMessage ( 'INFO', 'WEBSITE_TITLE', WEBSITE_TITLE );
+		$this->addMessage ( 'INFO', 'WEBSITE_META_VIEWPORT', WEBSITE_META_VIEWPORT );
 	}
-
+	
 	/**
 	 * check the headers of a URL and create a success/critical message
 	 *
-	 * @param string $url
+	 * @param string $url        	
 	 */
 	protected function checkURLStatus($constantName, $url, $expected = '200 OK') {
-		$urlStatus = get_headers($url);
-		$successfulResponse = preg_match('/' . $expected . '$/', $urlStatus[0]);
+		$urlStatus = get_headers ( $url );
+		$successfulResponse = preg_match ( '/' . $expected . '$/', $urlStatus [0] );
 		$urlStatusInfo = array (
-				$url.' '. ((! $successfulResponse) ? 'FAILED' : 'SUCCESSFUL') . ' RESPONSE',
+				$url . ' ' . ((! $successfulResponse) ? 'FAILED' : 'SUCCESSFUL') . ' RESPONSE',
 				(! $successfulResponse) ? 'CRITICAL' : 'SUCCESS',
-				$urlStatus
+				$urlStatus 
 		);
-		$this->addMessage((! $successfulResponse) ? 'CRITICAL' : 'SUCCESS', '' . $constantName . ' --> ' . $url, $urlStatusInfo);
+		$this->addMessage ( (! $successfulResponse) ? 'CRITICAL' : 'SUCCESS', '' . $constantName . ' --> ' . $url, $urlStatusInfo );
 	}
-
+	
+	/**
+	 * check all PHP native session calls
+	 */
+	protected function checkSession() {
+		
+		/** test get / set methods */
+		$this->appsession->set ( 'heartbeat session value', 'my value 123' );
+		$heartbeat = $this->appsession->get ( 'heartbeat session value' );
+		if (($heartbeat == 'my value 123')) {
+			$this->addMessage ( 'SUCCESS', 'PHP Session values', 'Native PHP Session value was set correctly' );
+		} else {
+			$this->addMessage ( 'CRITICAL', 'PHP Session values', 'Native PHP Session value was NOT set correctly' );
+		}
+		
+		/** test delete methods */
+		$heartbeat = $this->appsession->delete ( 'heartbeat session value' );
+		if (($heartbeat == '')) {
+			$this->addMessage ( 'SUCCESS', 'PHP Session values', 'Native PHP Session value was deleted successfully' );
+		} else {
+			$this->addMessage ( 'CRITICAL', 'PHP Session values', 'Native PHP Session value was could NOT be deleted' );
+		}
+	}
+	
 	/**
 	 * test through memcache for anything wrong
 	 */
 	protected function checkMemcache() {
-		$this->load->driver('cache');
-		$memcache_obj = $this->cache->memcached_simple->getMemcachedInstance();
-		$memcacheVersion = $memcache_obj->getVersion();
-		if (! empty($memcacheVersion)) {
-			$this->addMessage('SUCCESS', 'memcached version', $memcacheVersion);
+		$this->load->driver ( 'cache' );
+		$memcache_obj = $this->cache->memcached->getMemcachedInstance ();
+		$memcacheVersion = $memcache_obj->getVersion ();
+		if (! empty ( $memcacheVersion )) {
+			$this->addMessage ( 'SUCCESS', 'memcached version', $memcacheVersion );
 		} else {
-			$this->addMessage('CRITICAL', 'memcached version', 'memcached version could not be obtained');
+			$this->addMessage ( 'CRITICAL', 'memcached version', 'memcached version could not be obtained' );
 		}
-
+		
 		/**
 		 * is supported check
 		 */
-		if ($this->cache->memcached_simple->is_supported()) {
-			$this->addMessage('SUCCESS', 'memcached code igniter support', 'memcached is supported in PHP');
+		if ($this->cache->memcached->is_supported ()) {
+			$this->addMessage ( 'SUCCESS', 'memcached code igniter support', 'memcached is supported in PHP' );
 		} else {
-			$this->addMessage('CRITICAL', 'memcached code igniter support', 'memcached is not supported for PHP');
+			$this->addMessage ( 'CRITICAL', 'memcached code igniter support', 'memcached is not supported for PHP' );
 		}
-
+		
 		/**
 		 * get/set checking
 		 */
-		$this->cache->memcached_simple->save('test', 'testing', 0);
-		$testingValue = $this->cache->memcached_simple->get('test');
+		$this->cache->memcached->save ( 'test', 'testing', 0 );
+		$testingValue = $this->cache->memcached->get ( 'test' );
 		if ($testingValue == 'testing') {
-			$this->addMessage('SUCCESS', 'memcached simple save', 'a testing value was get and set');
+			$this->addMessage ( 'SUCCESS', 'memcached simple save', 'a testing value was get and set' );
 		} else {
-			$this->addMessage('ERROR', 'memcached simple save', 'simple testing value could not be get and set');
+			$this->addMessage ( 'ERROR', 'memcached simple save', 'simple testing value could not be get and set' );
 		}
-
+		
 		/**
 		 * test increment function
 		 */
-		$memcache_obj->set('test_integer', 1);
-		$memcache_obj->increment('test_integer', 2);
-		$testInteger = $memcache_obj->get('test_integer');
+		$memcache_obj->set ( 'test_integer', 1 );
+		$memcache_obj->increment ( 'test_integer', 2 );
+		$testInteger = $memcache_obj->get ( 'test_integer' );
 		if ($testInteger == 3) {
-			$this->addMessage('SUCCESS', 'memcached increment', 'test integer was incremented');
+			$this->addMessage ( 'SUCCESS', 'memcached increment', 'test integer was incremented' );
 		} else {
-			$this->addMessage('ERROR', 'memcached increment', 'test integer could not be incremented');
+			$this->addMessage ( 'ERROR', 'memcached increment', 'test integer could not be incremented' );
 		}
-
+		
 		/**
 		 * test decrment function
 		 */
-		$memcache_obj->decrement('test_integer', 1);
-		$testInteger = $memcache_obj->get('test_integer');
+		$memcache_obj->decrement ( 'test_integer', 1 );
+		$testInteger = $memcache_obj->get ( 'test_integer' );
 		if ($testInteger == 2) {
-			$this->addMessage('SUCCESS', 'memcached decrement', 'test integer was decremented');
+			$this->addMessage ( 'SUCCESS', 'memcached decrement', 'test integer was decremented' );
 		} else {
-			$this->addMessage('ERROR', 'memcached decrement', 'test integer could not be decremented');
+			$this->addMessage ( 'ERROR', 'memcached decrement', 'test integer could not be decremented' );
 		}
-
+		
 		/**
 		 * test delete key
 		 */
-		$memcache_obj->delete('test_integer');
-		$testInteger = $memcache_obj->get('test_integer');
-		if (empty($testInteger)) {
-			$this->addMessage('SUCCESS', 'memcached delete', 'test integer was deleted');
+		$memcache_obj->delete ( 'test_integer' );
+		$testInteger = $memcache_obj->get ( 'test_integer' );
+		if (empty ( $testInteger )) {
+			$this->addMessage ( 'SUCCESS', 'memcached delete', 'test integer was deleted' );
 		} else {
-			$this->addMessage('ERROR', 'memcached delete', 'test integer could not be deleted');
+			$this->addMessage ( 'ERROR', 'memcached delete', 'test integer could not be deleted' );
 		}
-
+		
 		/**
 		 * check memcache replace
 		 */
-		$memcache_obj->set('test_integer', 1);
-		$memcache_obj->replace('test_integer', 'abc');
-		$testInteger = $memcache_obj->get('test_integer');
+		$memcache_obj->set ( 'test_integer', 1 );
+		$memcache_obj->replace ( 'test_integer', 'abc' );
+		$testInteger = $memcache_obj->get ( 'test_integer' );
 		if ($testInteger == 'abc') {
-			$this->addMessage('SUCCESS', 'memcached replace', 'test integer was replaced with string');
+			$this->addMessage ( 'SUCCESS', 'memcached replace', 'test integer was replaced with string' );
 		} else {
-			$this->addMessage('ERROR', 'memcached replace', 'test integer could not be replaced with string');
+			$this->addMessage ( 'ERROR', 'memcached replace', 'test integer could not be replaced with string' );
 		}
-
+		
 		/**
 		 * output basic stats
 		 */
-		$this->addMessage('INFO', 'memcached status', $memcache_obj->getStats());
+		$this->addMessage ( 'INFO', 'memcached status', $memcache_obj->getStats () );
 	}
-
+	
 	/**
 	 * based on an incoming warning level, name and message related to the
 	 * checked resource and add it to the overall heartbeat array to be returned
 	 * as a JSON response
 	 *
 	 *
-	 * @param INFO|WARNING|ERROR|CRITICAL $warnLevel
-	 * @param string $name
-	 * @param string $message
+	 * @param INFO|WARNING|ERROR|CRITICAL $warnLevel        	
+	 * @param string $name        	
+	 * @param string $message        	
 	 */
 	protected function addMessage($warnLevel = 'SUCCESS', $name = '', $message = '') {
-		$warnLevel = strtoupper($warnLevel);
+		$warnLevel = strtoupper ( $warnLevel );
 		switch ($warnLevel) {
 			case 'SUCCESS' :
 			case 'INFO' :
-				$this->heartBeatResponse[] = array (
-				$name,
-				$warnLevel,
-				$message
+				$this->heartBeatResponse [] = array (
+						$name,
+						$warnLevel,
+						$message 
 				);
 				break;
-
+			
 			case 'WARNING' :
 			case 'ERROR' :
 			case 'CRITICAL' :
 				$this->HTTPStatusCode = 500;
-				$this->heartBeatResponse[] = array (
+				$this->heartBeatResponse [] = array (
 						$name,
 						$warnLevel,
-						$message
+						$message 
 				);
 				break;
-
+			
 			default :
-				$this->heartBeatResponse[] = array (
-				$name,
-				'SEVERITY UNKNOWN',
-				$message
+				$this->heartBeatResponse [] = array (
+						$name,
+						'SEVERITY UNKNOWN',
+						$message 
 				);
 				break;
 		}
 	}
-
+	
 	/**
 	 * create PHP status code helper functions [backwards compatible]
 	 *
 	 * @return Ambigous <string, number>|unknown|multitype:
 	 */
 	private function setupCustomHeadersOptions() {
-
+		
 		/**
 		 * http_response_code
 		 * Get or Set the HTTP response code (PHP 5 >= 5.4.0)
@@ -236,11 +297,10 @@ class heartbeat extends CI_Controller {
 		 *
 		 * @return Ambigous <string, number>
 		 */
-		if (! function_exists('http_response_code')) {
-
+		if (! function_exists ( 'http_response_code' )) {
 			function http_response_code($code = NULL) {
 				if ($code !== NULL) {
-
+					
 					switch ($code) {
 						case 100 :
 							$text = 'Continue';
@@ -354,19 +414,19 @@ class heartbeat extends CI_Controller {
 							$text = 'HTTP Version not supported';
 							break;
 						default :
-							exit('Unknown http status code "' . htmlentities($code) . '"');
+							exit ( 'Unknown http status code "' . htmlentities ( $code ) . '"' );
 							break;
 					}
-					$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-					header($protocol . ' ' . $code . ' ' . $text);
-					$GLOBALS['http_response_code'] = $code;
+					$protocol = (isset ( $_SERVER ['SERVER_PROTOCOL'] ) ? $_SERVER ['SERVER_PROTOCOL'] : 'HTTP/1.0');
+					header ( $protocol . ' ' . $code . ' ' . $text );
+					$GLOBALS ['http_response_code'] = $code;
 				} else {
-					$code = (isset($GLOBALS['http_response_code']) ? $GLOBALS['http_response_code'] : 200);
+					$code = (isset ( $GLOBALS ['http_response_code'] ) ? $GLOBALS ['http_response_code'] : 200);
 				}
 				return $code;
 			}
 		}
-
+		
 		/**
 		 * This is a modified version of code
 		 * from "stuart at sixletterwords dot com", at 14-Sep-2005 04:52.
@@ -385,29 +445,28 @@ class heartbeat extends CI_Controller {
 		 * - only gets the root URL (see line with "GET / HTTP/1.1").
 		 * - don't support HTTPS (nor the default HTTPS port).
 		 */
-		if (! function_exists('get_headers')) {
-
+		if (! function_exists ( 'get_headers' )) {
 			function get_headers($url, $format = 0) {
-				$url = parse_url($url);
+				$url = parse_url ( $url );
 				$end = "\r\n\r\n";
-				$fp = fsockopen($url['host'], (empty($url['port']) ? 80 : $url['port']), $errno, $errstr, 5);
+				$fp = fsockopen ( $url ['host'], (empty ( $url ['port'] ) ? 80 : $url ['port']), $errno, $errstr, 5 );
 				if ($fp) {
 					$out = "GET / HTTP/1.1\r\n";
-					$out .= "Host: " . $url['host'] . "\r\n";
+					$out .= "Host: " . $url ['host'] . "\r\n";
 					$out .= "Connection: Close\r\n\r\n";
 					$var = '';
-					fwrite($fp, $out);
-					while (! feof($fp)) {
-						$var .= fgets($fp, 1280);
+					fwrite ( $fp, $out );
+					while ( ! feof ( $fp ) ) {
+						$var .= fgets ( $fp, 1280 );
 						if (strpos($var, $end))
 							break;
 					}
-					fclose($fp);
-
-					$var = preg_replace("/\r\n\r\n.*\$/", '', $var);
-					$var = explode("\r\n", $var);
+					fclose ( $fp );
+					
+					$var = preg_replace ( "/\r\n\r\n.*\$/", '', $var );
+					$var = explode ( "\r\n", $var );
 					if ($format) {
-						foreach ($var as $i) {
+						foreach ( $var as $i ) {
 							if (preg_match('/^([a-zA-Z -]+): +(.*)$/', $i, $parts))
 								$v[$parts[1]] = $parts[2];
 						}

@@ -4,7 +4,7 @@ if (! defined('BASEPATH'))
 
 /**
  * Exceptions Controller
- * 	extend exceptions for advanced error handling
+ * extend exceptions for advanced error handling
  *
  * @copyright Kevin Hinds @ KevinHinds.com
  *
@@ -38,13 +38,13 @@ class MY_Exceptions extends CI_Exceptions {
         if ($status_code == 500) {
             $this->reportErrorCompleteInfo($message);
         }
-
+        
         /**
          * professionally produce the error output as an actual website page
          */
         include APPPATH . '/helpers/ui_helper.php';
         ob_start();
-
+        
         /**
          * turn off the AngularJS ngCloaking
          */
@@ -66,7 +66,7 @@ class MY_Exceptions extends CI_Exceptions {
      */
     public function log_exception($severity, $message, $filepath, $line) {
         parent::log_exception($severity, $message, $filepath, $line);
-
+        
         /**
          * if the error is fatal then we must log with as much info as possible
          */
@@ -91,7 +91,7 @@ class MY_Exceptions extends CI_Exceptions {
     /**
      * report critical error to the log with as much information as possible
      *
-     * @param string $messageTitle
+     * @param string $messageTitle            
      */
     protected function reportErrorCompleteInfo($messageTitle) {
         $messageBody = "Code Igniter Critical Error: \"" . $messageTitle . "\"\n";
@@ -108,7 +108,7 @@ class MY_Exceptions extends CI_Exceptions {
         $messageBody .= "\n\nSTACKTRACE \n";
         $messageBody .= "----------------\n\n";
         $messageBody .= $this->get_debug_backtrace();
-
+        
         log_message("error", $messageBody);
     }
-}
+} 

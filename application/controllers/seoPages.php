@@ -4,7 +4,7 @@ if (! defined('BASEPATH'))
 
 /**
  * SEO Pages Controller
- * 	SEO based pages for search engine optimization
+ * SEO based pages for search engine optimization
  *
  * @copyright Kevin Hinds @ KevinHinds.com
  *

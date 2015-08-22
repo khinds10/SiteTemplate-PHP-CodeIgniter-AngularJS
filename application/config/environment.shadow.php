@@ -24,8 +24,15 @@ define('ENVIRONMENT', 'development');
 /** 'true' if the system should write to syslog, else it will write to the PHP error_log */
 define('USE_SYSLOG', 'false');
 
+/** define the facility number for syslog to use, valid integers [0-7] */
+define('SYSLOG_FACILITY', 0);
+
 /** in addition to logging error messages, 'true' will also log debug level messages */
 define('LOG_DEBUG_MESSAGES', 'true');
+
+/** memcached config for front end */
+define('MEMCACHED_HOST', 'localhost');
+define('MEMCACHED_PORT', '11211');
 
 /** Facebook OAuth Apps */
 define('FACEBOOK_APP_KEY', 'Facebook APP Key Here');
@@ -48,4 +55,8 @@ define('RECAPTCHA_PRIVATE_KEY', 'Google Recaptcha Private Key HERE');
 /** Google Analytics Website Identifiers */
 define('GANALYTIC_CODE', 'UA-XXX-X');
 define('GANALYTIC_CROSS', 'UA-XXX-X');
-define('GOOGLE_SITE_VERIFICATION_ID', 'GOOGLE SITE VERIFY ID HERE');
+define('GOOGLE_SITE_VERIFICATION_ID', 'Google Site Verify ID Here');
+
+/** Google Re-Captcha public and private keys */
+define('NOCAPTCHA_RECAPTCHA_KEY', 'Google Captcha Key');
+define('NOCAPTCHA_RECAPTCHA_SECRET', 'Google Captcha Secret');

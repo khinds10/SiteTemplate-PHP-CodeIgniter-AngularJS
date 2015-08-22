@@ -19,27 +19,27 @@ if (! defined('BASEPATH'))
  * limitations under the License.
  */
 class index extends MY_Controller {
-
-    /**
-     * construct controller with libraries/helpers included from base controller
-     */
-    public function __construct() {
-        parent::__construct();
-    }
-
-    /**
-     * index homepage
-     */
-    public function index() {
+	
+	/**
+	 * construct controller with libraries/helpers included from base controller
+	 */
+	public function __construct() {
+		parent::__construct ();
+	}
+	
+	/**
+	 * index homepage
+	 */
+	public function index() {
         $this->values['websiteDescription'] = "Website description goes here";
-        $this->renderCompletePage('index/index', $this->values);
-    }
-
-    /**
-     * override 404 page errors
-     */
-    public function error_404() {
-        $this->values['websiteTitle'] = "404 Page Not Found";
-        $this->renderCompletePage('index/404', $this->values);
-    }
+		$this->renderCompletePage ( 'index/index', $this->values );
+	}
+	
+	/**
+	 * override 404 page errors
+	 */
+	public function error_404() {
+		$this->values ['websiteTitle'] = "404 Page Not Found";
+		$this->renderCompletePage ( 'index/404', $this->values );
+	}
 }

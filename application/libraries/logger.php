@@ -4,7 +4,7 @@ if (! defined('BASEPATH'))
 
 /**
  * Logger
- * 	log system events by log level "error"|"debug"
+ * log system events by log level "error"|"debug"
  *
  * @copyright Kevin Hinds @ KevinHinds.com
  *
@@ -25,7 +25,7 @@ class logger {
     /**
      * log array of mixed type variables to string as a error message
      *
-     * @param array $arrayVars
+     * @param array $arrayVars            
      */
     public static function logVarsError($arrayVars = array()) {
         logger::logError(logger::arrayVarsToString($arrayVars));
@@ -34,7 +34,7 @@ class logger {
     /**
      * log array of mixed type variables to string as a debug message
      *
-     * @param array $arrayVars
+     * @param array $arrayVars            
      */
     public static function logVarsDebug($arrayVars = array()) {
         logger::logDebug(logger::arrayVarsToString($arrayVars));
@@ -43,7 +43,7 @@ class logger {
     /**
      * log error message
      *
-     * @param string $message
+     * @param string $message            
      */
     public static function logError($message = "") {
         log_message("error", $message);
@@ -52,7 +52,7 @@ class logger {
     /**
      * log debug message but only if system is set to "debug"
      *
-     * @param string $message
+     * @param string $message            
      */
     public static function logDebug($message = "") {
         log_message("debug", $message);
@@ -61,7 +61,7 @@ class logger {
     /**
      * build list of variable names and values
      *
-     * @param array $arrayVars
+     * @param array $arrayVars            
      * @return string
      */
     public static function arrayVarsToString($arrayVars = array()) {
@@ -75,7 +75,7 @@ class logger {
     /**
      * convert any type of input to string
      *
-     * @param mixed $mixed
+     * @param mixed $mixed            
      */
     public static function toString($mixed) {
         return print_r($mixed, true);

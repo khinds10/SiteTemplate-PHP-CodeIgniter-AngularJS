@@ -21,30 +21,34 @@ if (! defined('BASEPATH'))
  * limitations under the License.
  */
 class MY_Controller extends CI_Controller {
-
+	
 	/**
 	 * values for the views
 	 *
 	 * @var array
 	 */
 	public $values = array ();
-
+	
 	/**
 	 * construct controller with libraries/helpers included
 	 */
 	public function __construct() {
 		parent::__construct ();
-
-        /** global view values */
+		
+		/** global angular includes */
 		$this->values ['angularJS'] = '<script src="' . getStaticResourceURL ( '/app/scripts/app.js' ) . '" type="text/javascript"></script>' . "\n\t";
 		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/services/cookies.js' ) . '" type="text/javascript"></script>' . "\n\t";
 		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/services/countryDropdown.js' ) . '" type="text/javascript"></script>' . "\n\t";
 		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/services/socialMedia.js' ) . '" type="text/javascript"></script>' . "\n\t";
-		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/directives/setFixedTop.js' ) . '" type="text/javascript"></script>' . "\n\t";
 		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/controllers/index.js' ) . '" type="text/javascript"></script>' . "\n\t";
 		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/controllers/modal.js' ) . '" type="text/javascript"></script>' . "\n\t";
 		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/controllers/seoPages.js' ) . '" type="text/javascript"></script>' . "\n\t";
 		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/controllers/sitePages.js' ) . '" type="text/javascript"></script>' . "\n\t";
+		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/directives/setFixedTop.js' ) . '" type="text/javascript"></script>' . "\n\t";
+		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/filters/currency.js' ) . '" type="text/javascript"></script>' . "\n\t";
+		$this->values ['angularJS'] .= '<script src="' . getStaticResourceURL ( '/app/scripts/filters/trust.js' ) . '" type="text/javascript"></script>' . "\n\t";
+		
+		/** global visitor values */
 		$this->values ['contactWW'] = $this->Model_visitor->getContactUsPhoneWorldWide ();
 		$this->values ['contactTollFree'] = $this->Model_visitor->getContactUsPhone ();
 		$this->values ['userCountryCode'] = $this->Model_visitor->getUserCountryCode ();
@@ -64,13 +68,13 @@ class MY_Controller extends CI_Controller {
 				)
 		);
 	}
-
+	
 	/**
 	 * render a complete application webpage with complete header/footer & navigation
 	 *
 	 * @param string $view,
 	 *        	relative path of the view file to render
-	 * @param mixed $data
+	 * @param mixed $data        	
 	 */
 	public function renderCompletePage($view, $data = null) {
 		$this->load->view ( 'global/header', $data );
@@ -79,6 +83,18 @@ class MY_Controller extends CI_Controller {
 		$this->load->view ( 'global/footer', $data );
 	}
 
+	/**
+	 * render a webpage without header/footer & navigation
+	 *
+	 * @param string $view,
+	 *        	relative path of the view file to render
+	 * @param mixed $data        	
+	 */
+	public function renderMiniPage($view, $data = null) {
+		$this->load->view ( 'global/header', $data );
+		$this->load->view ( $view, $data );
+	}
+	
 	/**
 	 * get existing script URL reliably
 	 *
@@ -99,7 +115,7 @@ class MY_Controller extends CI_Controller {
 		$_SERVER ['SCRIPT_URL'] = $scriptURL;
 		return $scriptURL;
 	}
-
+	
 	/**
 	 * create the complete URL to show a particular modal
 	 *
@@ -117,7 +133,7 @@ class MY_Controller extends CI_Controller {
 		}
 		return $showModalURL;
 	}
-
+	
 	/**
 	 * defensively determine
 	 * if we're in production or not based on environment settings
@@ -127,6 +143,31 @@ class MY_Controller extends CI_Controller {
 			return true;
 		}
 		if (strtolower ( ENVIRONMENT ) == 'prod') {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * defensively determine
+	 * if we're in development or not based on environment settings
+	 */
+	public function isDevelopment() {
+		if (strtolower ( ENVIRONMENT ) == 'development') {
+			return true;
+		}
+		if (strtolower ( ENVIRONMENT ) == 'dev') {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * defensively determine
+	 * if we're in QA or not based on environment settings
+	 */
+	public function isQA() {
+		if (strtolower ( ENVIRONMENT ) == 'qa') {
 			return true;
 		}
 		return false;

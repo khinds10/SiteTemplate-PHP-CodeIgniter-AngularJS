@@ -48,6 +48,9 @@ $route['404_override'] = 'index/error_404';
 */
 
 $route['heartbeat'] = 'heartbeat/generate';
+$route['set-session-value'] = 'heartbeat/setSessionValue';
+$route['get-session-value'] = 'heartbeat/getSessionValue';
+$route['view-current-session'] = 'heartbeat/dumpSession';
 
 /*
  | -------------------------------------------------------------------------
@@ -59,7 +62,7 @@ $route['google_analytics.js'] = 'javascript/googleAnalytics';
 
 /*
  | -------------------------------------------------------------------------
- | Browser AJAX calls/responses
+ | Browser AJAX calls/responses 
  | -------------------------------------------------------------------------
  */
 
@@ -79,6 +82,6 @@ $route['about'] = 'seoPages/about';
  | -------------------------------------------------------------------------
  | Site Pages (for optimal user experience)
  | -------------------------------------------------------------------------
-*/
+ */
 
 $route['faqs'] = 'sitePages/faqs';

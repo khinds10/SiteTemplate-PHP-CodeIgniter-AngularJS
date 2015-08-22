@@ -4,7 +4,7 @@ if (! defined('BASEPATH'))
 
 /**
  * RESTful Services Class
- * 	restful class to delegate CURL requests to local server's webservices
+ * restful class to delegate CURL requests to local server's webservices
  *
  * @copyright Kevin Hinds @ KevinHinds.com
  *
@@ -35,18 +35,18 @@ class restful {
         $this->_ci->load->library('logger');
         $this->ch = curl_init();
     }
-
+    
     /**
      * issue an HTTP GET request to a webservice
      *
-     * @param string $url
+     * @param string $url            
      * @param array $headers,
      *            optional headers to pass to the request
      */
     public function httpGet($url, $headers = array()) {
         $this->setCurlOptions($url, array(), $headers);
         $response = curl_exec($this->ch);
-
+        
         /**
          * debug all the cURL calls
          */
@@ -55,14 +55,14 @@ class restful {
             'headers' => $headers,
             'response' => logger::toString($response)
         ));
-
+        
         return $response;
     }
 
     /**
      * issue an HTTP GET request to a webservice expecting a JSON formatted response
      *
-     * @param string $url
+     * @param string $url            
      */
     public function httpGetJSON($url) {
         return json_decode($this->httpGet($url, array(
@@ -73,7 +73,7 @@ class restful {
     /**
      * issue an HTTP POST request to a webservice with fields
      *
-     * @param string $url
+     * @param string $url            
      * @param array $postFields,
      *            array of name value fields if HTTP POST
      * @param array $headers,
@@ -82,7 +82,7 @@ class restful {
     public function httpPost($url, $postFields, $headers = array()) {
         $this->setCurlOptions($url, $postFields, $headers);
         $response = curl_exec($this->ch);
-
+                
         /**
          * debug all the cURL calls
          */
@@ -90,15 +90,14 @@ class restful {
             'url' => $url,
             'headers' => $headers,
             'response' => logger::toString($response)
-        ));
-
+        ));        
         return $response;
     }
 
     /**
      * issue an HTTP POST request to a webservice with fields expecting a JSON formatted response
      *
-     * @param string $url
+     * @param string $url            
      * @param array $headers,
      *            optional headers to pass to the request
      */
@@ -111,40 +110,37 @@ class restful {
     /**
      * setup the cURL options for the POST/GET cURL request to be done
      *
-     * @param string $url
+     * @param string $url            
      * @param array $postFields,
      *            array of name value fields if HTTP POST
      * @param array $headers,
      *            optional headers to apply to the request
      */
     protected function setCurlOptions($url, $postFields = array(), $headers = array()) {
-
+        
+    	/**
+    	 * setup the cURL options on the $ch object
+    	 */
+    	curl_setopt_array($this->ch, array(
+	    	CURLOPT_URL => $url,
+	    	CURLOPT_RETURNTRANSFER => true,
+	    	CURLOPT_CONNECTTIMEOUT => CURL_WAIT_TO_CONNECT_SECONDS,
+	    	CURLOPT_TIMEOUT => CURL_WAIT_FOR_RESPONSE_SECONDS
+    	));
+    	
         /**
          * if post fields present, then we must be doing an HTTP POST
          */
-        $HTTPPostOptions = array();
         if (count($postFields)) {
-            $postFields = array();
+            $postFieldsEncoded = array();
             foreach ($postFields as $key => $value) {
-                $postFields[] = $key . "=" . $value;
+                $postFieldsEncoded[] = $key . "=" . $value;
             }
-            $HTTPPostOptions = array(
-                CURLOPT_POST => count($postFields),
-                CURLOPT_POSTFIELDS => implode("&", $postFields)
-            );
+            curl_setopt($this->ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+            curl_setopt($this->ch, CURLOPT_POST, count($postFieldsEncoded));
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, implode("&", $postFieldsEncoded));
         }
-
-        /**
-         * setup the cURL options on the $ch object
-         */
-        curl_setopt_array($this->ch, array(
-            CURLOPT_URL => $url,
-            $HTTPPostOptions,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => CURL_WAIT_TO_CONNECT_SECONDS,
-            CURLOPT_TIMEOUT => CURL_WAIT_FOR_RESPONSE_SECONDS
-        ));
-
+        
         /**
          * add any headers if needed
          */
@@ -163,11 +159,11 @@ class restful {
     /**
      * parse XML with graceful error handling to error log
      *
-     * @param string $XMLString
+     * @param string $XMLString            
      */
     public static function parseXMLFromString($XMLString = "") {
-        $this->_ci = & get_instance();
-        $this->_ci->load->library('logger');
+        $ci = & get_instance();
+        $ci->load->library('logger');
         libxml_use_internal_errors(true);
         $results = simplexml_load_string($XMLString);
         if ($results === false) {

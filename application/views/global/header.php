@@ -26,6 +26,22 @@
     <script src="<?=getStaticResourceURL('/app/scripts/vendor/ng-modal.min.js');?>" type="text/javascript"></script>
     <script src="<?=getStaticResourceURL('/google_analytics.js');?>" type="text/javascript"></script>
     <script type="text/javascript" src="https://platform.linkedin.com/in.js">api_key: <?=LINKEDIN_APP_KEY?></script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=loadCaptcha&render=explicit" async defer></script>
+    <script type="text/javascript">
+	   var captchaContainer = null;
+	   window.grecaptchaValue = null;
+	   var loadCaptcha = function() {
+	     captchaContainer = grecaptcha.render('captcha_container', {
+	       'sitekey' : '<?=NOCAPTCHA_RECAPTCHA_KEY?>',
+	       'callback' : function(response) {
+		    var captchaErrorMessage = document.getElementById('captcha-error-message');
+		    captchaErrorMessage.style.display = 'none';
+		    captchaErrorMessage.style.visibility = 'hidden';
+		    window.grecaptchaValue = response;
+	       }
+	     });
+	   }; 
+   </script>
     <?=(isset($angularJS)) ? $angularJS : '' ;?>
     <?=(isset($includeJS)) ? $includeJS : '' ;?>
 </head>

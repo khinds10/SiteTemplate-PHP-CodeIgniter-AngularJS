@@ -4,8 +4,8 @@ if (! defined('BASEPATH'))
 
 /**
  * Javascript Controller
- *  include JS files that has to be populated from server side values
- *  also include the small AJAX requests that AngularJS will implement
+ * include JS files that has to be populated from server side values
+ * also include the small AJAX requests that AngularJS will implement
  *
  * @copyright Kevin Hinds @ KevinHinds.com
  *
@@ -35,11 +35,24 @@ class javascript extends MY_Controller {
      */
     public function googleAnalytics() {
         if (! $this->Model_visitor->isRobot) {
+	    	$this->setCacheHeaders();
             $this->values['ipAddress'] = $this->Model_visitor->ipAddress;
             $this->load->view('javascript/googleAnalytics', $this->values);
         }
     }
-
+    
+    /**
+     * tell CDNs to cache our JS for 30 days
+     * 	they're only created by PHP dynamically to populate config values
+     */
+    protected function setCacheHeaders() {
+    	$secondsCached = 2592000;
+    	$ts = gmdate("D, d M Y H:i:s", time() + $secondsCached) . " GMT";
+    	header("Expires: $ts");
+    	header("Pragma: cache");
+    	header("Cache-Control: public, max-age=$secondsCached");
+    }
+        
     /**
      * for given country code get the country's name
      */
