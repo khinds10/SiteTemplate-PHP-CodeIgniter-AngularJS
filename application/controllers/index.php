@@ -36,6 +36,13 @@ class index extends MY_Controller {
 	}
 	
 	/**
+	 * render the microsoft browser config
+	 */
+	public function browserconfig() {
+		$this->load->view ( 'index/browserconfig', $this->values );
+	}
+	
+	/**
 	 * override 404 page errors
 	 */
 	public function error_404() {

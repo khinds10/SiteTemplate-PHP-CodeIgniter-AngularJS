@@ -40,6 +40,7 @@
 
 $route['default_controller'] = 'index';
 $route['404_override'] = 'index/error_404';
+$route['browserconfig.xml'] = 'index/browserconfig';
 
 /*
  | -------------------------------------------------------------------------
