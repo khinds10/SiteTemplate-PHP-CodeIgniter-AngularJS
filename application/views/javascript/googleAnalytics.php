@@ -4,12 +4,12 @@ $ci = & get_instance();
 ?>
 var _gaq = _gaq || [];
         _gaq.push(
-            ['_setAccount', '<?=GANALYTIC_CODE?>'],
+            ['_setAccount', '<?=GANALYTICS_CODE?>'],
             ['_setDomainName', '<?=WEBSITE_PRODUCTION_URL?>'],
             ['_setAllowLinker', true],
             ['_trackPageview'],
             ['_trackPageLoadTime'],
-            ['b._setAccount', '<?=GANALYTIC_CROSS?>'],
+            ['b._setAccount', '<?=GANALYTICS_CROSS?>'],
             ['b._setDomainName', '<?=WEBSITE_PRODUCTION_URL?>'],
             ['b._setAllowLinker', true],
             ['b._trackPageview'],

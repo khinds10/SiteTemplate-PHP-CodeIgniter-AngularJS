@@ -107,9 +107,9 @@ class heartbeat extends CI_Controller {
 	 * show the site basic URL configuration
 	 */
 	protected function showSiteInfo() {
-		$this->addMessage('INFO', 'GOOGLE_ANALYTICS_ACCOUNT', GOOGLE_ANALYTICS_ACCOUNT);
-		$this->addMessage ( 'INFO', 'TOLLFREE_DEFAULT', TOLLFREE_DEFAULT );
-		$this->addMessage ( 'INFO', 'WW_DEFAULT', WW_DEFAULT );
+		$this->addMessage('INFO', 'GANALYTICS_CODE', GANALYTICS_CODE);
+		$this->addMessage ( 'INFO', 'CONTACT_TOLLFREE', CONTACT_TOLLFREE );
+		$this->addMessage ( 'INFO', 'CONTACT_WW', CONTACT_WW );
 		$this->addMessage ( 'INFO', 'WEBSITE_NAME', WEBSITE_NAME );
 		$this->addMessage ( 'INFO', 'WEBSITE_DESCRIPTION', WEBSITE_DESCRIPTION );
 		$this->addMessage ( 'INFO', 'WEBSITE_TITLE', WEBSITE_TITLE );

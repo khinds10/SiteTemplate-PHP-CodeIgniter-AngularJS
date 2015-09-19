@@ -53,8 +53,8 @@ define('RECAPTCHA_PUBLIC_KEY', 'Google Recaptcha Key HERE');
 define('RECAPTCHA_PRIVATE_KEY', 'Google Recaptcha Private Key HERE');
 
 /** Google Analytics Website Identifiers */
-define('GANALYTIC_CODE', 'UA-XXX-X');
-define('GANALYTIC_CROSS', 'UA-XXX-X');
+define('GANALYTICS_CODE', 'UA-XXX-X');
+define('GANALYTICS_CROSS', 'UA-XXX-X');
 define('GOOGLE_SITE_VERIFICATION_ID', 'Google Site Verify ID Here');
 
 /** Google Re-Captcha public and private keys */

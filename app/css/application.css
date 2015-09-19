@@ -12,3 +12,9 @@ body {
 	min-height: 300px;
 	border: solid 3px #000;
 }
+
+#four-oh-four-container {
+	text-align: center; 
+	padding-top: 100px; 
+	padding-bottom: 100px;
+}
