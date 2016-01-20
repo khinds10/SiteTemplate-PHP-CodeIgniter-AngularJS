@@ -1,0 +1,9 @@
+{
+    "require": {
+        "codeigniter/framework": "^3.0",
+        "guzzlehttp/guzzle": "^6.1",
+        "aws/aws-sdk-php": "^3.11",
+        "swiftmailer/swiftmailer": "^5.4",
+		"tedivm/stash": "0.13.*"
+   }
+}

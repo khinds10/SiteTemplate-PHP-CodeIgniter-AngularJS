@@ -1,9 +1,0 @@
-<div id='four-oh-four-container' class='page-container'>
-	<h2>A PHP Error was encountered</h2>
-	<h3>
-		<p>Severity: <?php echo $severity; ?></p>
-		<p>Message: <?php echo $message; ?></p>
-		<p>Filename: <?php echo $filepath; ?></p>
-		<p>Line Number: <?php echo $line; ?></p>
-	</h3>
-</div>

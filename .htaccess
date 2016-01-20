@@ -6,9 +6,8 @@ RewriteEngine On
 
 RewriteBase /
 
-
 # Do not enable rewriting for files or directories that exist
-RewriteCond $1 !^(index\.php|img|app|css|js|robots\.txt|.*\.html)
+RewriteCond $1 !^(index\.php|images|css|js|forum|static_error_pages|thumbs|website|robots\.txt|.*\.html)
 
 # For reuests that are not actual files or directories,
 # Rewrite to index.php/URL
