@@ -1,4 +1,4 @@
-CodeIgniter PHP Website with AngularJS included to start
+## CodeIgniter PHP Website with AngularJS included to start
 
 Core PHP Dependancies
 		Install "composer" PHP package manager
